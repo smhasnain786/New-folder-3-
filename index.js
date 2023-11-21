@@ -1,5 +1,4 @@
 const express = require('express')
-const serverless=require('serverless-http')
 const puppeteer = require('puppeteer');
 const port=process.env.PORT||3000
 const app = express()
