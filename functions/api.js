@@ -1,6 +1,7 @@
 const express = require('express')
 const serverless=require('serverless-http')
 const puppeteer = require('puppeteer');
+const port=process.env.PORT||3000
 const app = express()
 app.get('/', (req, res) => { res.send('hi') })
 app.get('/captcha', (req, res) => {
@@ -64,5 +65,6 @@ app.get('/captcha', (req, res) => {
     }
   })();
 })
-
-module.exports.handler=serverless(app)
+app.listen(port,()=>{
+  console.log("listining");
+})
