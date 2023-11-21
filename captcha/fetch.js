@@ -1,5 +1,7 @@
 const express = require('express')
 const puppeteer = require('puppeteer');
+const fs = require('fs');
+const axios = require('axios');
 const app = express()
 app.get('/', (req, res) => { res.send('hi') })
 app.get('/captcha', (req, res) => {
@@ -16,6 +18,22 @@ app.get('/captcha', (req, res) => {
         const element = await page1.waitForSelector('img#captcha_image');
         await element.screenshot({ path: 'uploads1/screenshot.png' });
       }, 3000)
+      const filePath = './uploads1/screenshot.png'; // Replace this with your local file path
+      const remoteServerURL = 'https://icylawngreenmetadata.syedhasnain10.repl.co/upload'; // Replace this with the remote server's upload endpoint
+      const fileStream = fs.createReadStream(filePath);
+      const formData = new FormData();
+      formData.append('file', fileStream);
+      axios.post(remoteServerURL, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+        .then(response => {
+          console.log('File uploaded:', response.data);
+        })
+        .catch(error => {
+          console.error('Error uploading file:', error);
+        });
       // wait for the selector to load
       // declare a variable with an ElementHandle await page1.waitForSelector('input#cino');
       await page1.type('input[id=cino]', 'MHAU030151912016');
@@ -29,7 +47,7 @@ app.get('/captcha', (req, res) => {
       await button.click();
       await button.click();
       console.log('Button clicked2');
-      await page.$eval('.cB9M7', el => el.value = 'https://syedforum.000webhostapp.com/img/captcha.png');
+      await page.$eval('.cB9M7', el => el.value = 'https://syedforum.000webhostapp.com/img/screenshot.png');
       setTimeout(async () => {
         const submit = await page.waitForSelector('div.Qwbd3');
         console.log('----------->', submit);
@@ -43,7 +61,7 @@ app.get('/captcha', (req, res) => {
       let element = await page.waitForSelector('[dir="ltr"]')
       const values = await page.evaluate(el => el.querySelector('[dir="ltr"]').innerHTML, element)
       console.log(typeof (values));
-      var codes = (values) 
+      var codes = (values)
       page.close();
       await page1.waitForSelector('input#fcaptcha_code')
       await page1.type('input[id=fcaptcha_code]', codes);
